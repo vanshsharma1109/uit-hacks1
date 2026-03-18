@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UIT Hacks — Register Your Team</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #6c63ff;
+    --accent2: #ff6b6b;
+    --accent3: #43e97b;
+    --text: #f0f0f8;
+    --text-muted: #8888aa;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(108,99,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(108,99,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-orb {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-orb.one { background: var(--accent); top: -200px; left: -200px; }
+  .glow-orb.two { background: var(--accent2); bottom: -200px; right: -200px; }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Header */
+  .header { margin-bottom: 48px; }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    border: 1px solid rgba(108,99,255,0.3);
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  h1 {
+    font-size: clamp(42px, 8vw, 72px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+  }
+  h1 span.accent { color: var(--accent); }
+  h1 span.accent2 { color: var(--accent2); }
+
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  .meta-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+  .pill strong { color: var(--text); font-weight: 700; }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 40px 0 32px;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* Form */
+  .form-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .form-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .field { margin-bottom: 20px; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  label .req { color: var(--accent2); margin-left: 2px; }
+
+  input, textarea, select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+  }
+  input::placeholder, textarea::placeholder { color: #444460; }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+  }
+  textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238888aa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+  select option { background: var(--surface2); }
+
+  .field-hint {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* Member fields */
+  .member-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 500px) { .member-grid { grid-template-columns: 1fr; } }
+
+  .member-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 16px;
+  }
+  .member-card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .member-card input {
+    background: var(--bg);
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .member-card input:last-child { margin-bottom: 0; }
+
+  /* Tracks */
+  .tracks-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 500px) { .tracks-grid { grid-template-columns: 1fr; } }
+
+  .track-option { display: none; }
+  .track-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: var(--surface2);
+  }
+  .track-label:hover { border-color: var(--accent); }
+  .track-option:checked + .track-label {
+    border-color: var(--accent);
+    background: rgba(108,99,255,0.08);
+  }
+  .track-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .track-desc {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .track-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  /* Prize preview */
+  .prize-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .prize-table th {
+    text-align: left;
+    color: var(--text-muted);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0 0 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .prize-table td {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+    color: var(--text);
+  }
+  .prize-table td:last-child { color: var(--accent3); font-weight: 700; text-align: right; }
+  .prize-table tr:last-child td { border-bottom: none; }
+  .rank { color: var(--text-muted); }
+
+  /* Submit */
+  .submit-wrap { margin-top: 24px; }
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(108,99,255,0.35);
+  }
+  .submit-btn:active { transform: translateY(0); }
+
+  .terms {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 14px;
+    line-height: 1.6;
+  }
+
+  /* Success state */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+  .success-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(67,233,123,0.1);
+    border: 2px solid var(--accent3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 28px;
+  }
+  .success-screen h2 { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+  .success-screen p { font-family: var(--mono); font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  .team-id {
+    font-family: var(--mono);
+    font-size: 20px;
+    color: var(--accent);
+    font-weight: 700;
+    margin: 20px 0 8px;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .form-section {
+    animation: fadeUp 0.5s ease both;
+  }
+  .form-section:nth-child(1) { animation-delay: 0.1s; }
+  .form-section:nth-child(2) { animation-delay: 0.2s; }
+  .form-section:nth-child(3) { animation-delay: 0.3s; }
+  .form-section:nth-child(4) { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="tag">UIT — HPU Shimla</div>
+    <h1>UIT<br><span class="accent">Hacks</span><span class="accent2">.</span></h1>
+    <p class="subtitle">
+      8 hours. 3 tracks. 1 winner per track.<br>
+      Build something that matters — April 6, 2025.
+    </p>
+    <div class="meta-pills">
+      <div class="pill">📅 <strong>April 6, 2025</strong></div>
+      <div class="pill">⏱ <strong>8 Hours</strong></div>
+      <div class="pill">👥 <strong>2–4 Members</strong></div>
+      <div class="pill">🏆 <strong>₹50,000 Prize Pool</strong></div>
+    </div>
+  </div>
+
+  <div id="form-area">
+    <!-- Track Selection -->
+    <div class="form-section">
+      <div class="section-label">01 — Choose your track</div>
+      <div class="tracks-grid">
+        <div>
+          <input type="radio" name="track" id="track-agri" value="AgriTech" class="track-option" required>
+          <label for="track-agri" class="track-label">
+            <div class="track-icon">🌾</div>
+            <div class="track-name">AgriTech</div>
+            <div class="track-desc">Agriculture meets technology</div>
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="track" id="track-api" value="API Development" class="track-option">
+          <label for="track-api" class="track-label">
+            <div class="track-icon">⚡</div>
+            <div class="track-name">API Development</div>
+            <div class="track-desc">Build powerful interfaces</div>
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="track" id="track-3" value="Track 3" class="track-option">
+          <label for="track-3" class="track-label">
+            <div class="track-icon">🚀</div>
+            <div class="track-name">Track 3</div>
+            <div class="track-desc">Coming soon</div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Info -->
+    <div class="form-section">
+      <div class="section-label">02 — Team details</div>
+      <div class="field">
+        <label>Team name <span class="req">*</span></label>
+        <input type="text" id="team-name" placeholder="e.g. ByteBuilders" required>
+      </div>
+      <div class="field">
+        <label>Team leader name <span class="req">*</span></label>
+        <input type="text" id="leader-name" placeholder="Full name" required>
+      </div>
+      <div class="field">
+        <label>Team leader email <span class="req">*</span></label>
+        <input type="email" id="leader-email" placeholder="leader@example.com" required>
+      </div>
+      <div class="field">
+        <label>Team leader phone <span class="req">*</span></label>
+        <input type="tel" id="leader-phone" placeholder="+91 XXXXX XXXXX" required>
+      </div>
+      <div class="field">
+        <label>Team leader GitHub <span class="req">*</span></label>
+        <input type="url" id="leader-github" placeholder="https://github.com/username" required>
+      </div>
+      <div class="field">
+        <label>College / Institution <span class="req">*</span></label>
+        <input type="text" id="college" placeholder="University Institute of Technology, HPU" required>
+      </div>
+    </div>
+
+    <!-- Team Members -->
+    <div class="form-section">
+      <div class="section-label">03 — Team members (excluding leader)</div>
+      <p class="field-hint" style="margin-bottom:16px;">Add up to 3 additional members (min 1 required)</p>
+      <div class="member-grid">
+        <div class="member-card">
+          <div class="member-card-label">Member 2 <span class="req">*</span></div>
+          <input type="text" id="m2-name" placeholder="Full name" required>
+          <input type="email" id="m2-email" placeholder="Email ID">
+          <input type="url" id="m2-github" placeholder="GitHub URL">
+        </div>
+        <div class="member-card">
+          <div class="member-card-label">Member 3</div>
+          <input type="text" id="m3-name" placeholder="Full name">
+          <input type="email" id="m3-email" placeholder="Email ID">
+          <input type="url" id="m3-github" placeholder="GitHub URL">
+        </div>
+        <div class="member-card">
+          <div class="member-card-label">Member 4</div>
+          <input type="text" id="m4-name" placeholder="Full name">
+          <input type="email" id="m4-email" placeholder="Email ID">
+          <input type="url" id="m4-github" placeholder="GitHub URL">
+        </div>
+      </div>
+    </div>
+
+    <!-- Project Idea -->
+    <div class="form-section">
+      <div class="section-label">04 — Project idea</div>
+      <div class="field">
+        <label>Brief project idea <span class="req">*</span></label>
+        <textarea id="project-idea" placeholder="Describe your idea in 2–3 sentences. What problem are you solving and how?" required></textarea>
+        <div class="field-hint">Max 300 characters. Keep it concise.</div>
+      </div>
+    </div>
+
+    <!-- Prize Preview -->
+    <div class="form-section">
+      <div class="section-label">05 — Prize pool</div>
+      <table class="prize-table">
+        <thead>
+          <tr>
+            <th>Track</th>
+            <th>Position</th>
+            <th style="text-align:right">Prize</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>AgriTech / API / Track 3</td><td class="rank">🥇 1st</td><td>₹8,000</td></tr>
+          <tr><td>AgriTech / API / Track 3</td><td class="rank">🥈 2nd</td><td>₹5,000</td></tr>
+          <tr><td>AgriTech / API / Track 3</td><td class="rank">🥉 3rd</td><td>₹3,000</td></tr>
+          <tr><td colspan="2"><strong>Best Overall Team</strong></td><td>₹2,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-wrap">
+      <button class="submit-btn" onclick="handleSubmit()">Register Your Team →</button>
+      <p class="terms">By registering, you agree to participate in person on April 6, 2025 at HPU Main Campus, Shimla. All decisions of the judges are final.</p>
+    </div>
+  </div>
+
+  <!-- Success Screen -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>You're in!</h2>
+    <div class="team-id" id="team-id-display"></div>
+    <p>Your team has been registered for UIT Hacks.<br>
+    We'll send confirmation details to your email soon.<br><br>
+    See you on <strong style="color:var(--text)">April 6, 2025</strong> — come ready to build. 🚀</p>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7FLmEtKhQLGU-IUYWs3r7-2UGD22a8z9Zho3agkVjnNFVmS2VqJsRaYyYxqxiGS1P/exec";
+
+async function handleSubmit() {
+  const required = ['team-name','leader-name','leader-email','leader-phone','leader-github','college','m2-name','project-idea'];
+  let valid = true;
+
+  required.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+      el.style.borderColor = '#ff6b6b';
+      el.style.boxShadow = '0 0 0 3px rgba(255,107,107,0.1)';
+      valid = false;
+      el.addEventListener('input', () => {
+        el.style.borderColor = '';
+        el.style.boxShadow = '';
+      }, { once: true });
+    }
+  });
+
+  if (!document.querySelector('input[name="track"]:checked')) {
+    alert('Please select a track!');
+    valid = false;
+  }
+
+  if (!valid) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  // Show loading state
+  const btn = document.querySelector('.submit-btn');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+
+  const payload = {
+    track: document.querySelector('input[name="track"]:checked').value,
+    teamName: document.getElementById('team-name').value,
+    leaderName: document.getElementById('leader-name').value,
+    leaderEmail: document.getElementById('leader-email').value,
+    leaderPhone: document.getElementById('leader-phone').value,
+    leaderGithub: document.getElementById('leader-github').value,
+    college: document.getElementById('college').value,
+    m2Name: document.getElementById('m2-name').value,
+    m2Email: document.getElementById('m2-email').value,
+    m2Github: document.getElementById('m2-github').value,
+    m3Name: document.getElementById('m3-name').value,
+    m3Email: document.getElementById('m3-email').value,
+    m3Github: document.getElementById('m3-github').value,
+    m4Name: document.getElementById('m4-name').value,
+    m4Email: document.getElementById('m4-email').value,
+    m4Github: document.getElementById('m4-github').value,
+    projectIdea: document.getElementById('project-idea').value
+  };
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+
+    if (result.status === 'success') {
+      document.getElementById('form-area').style.display = 'none';
+      const success = document.getElementById('success-screen');
+      success.style.display = 'block';
+      document.getElementById('team-id-display').textContent = result.teamId;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      throw new Error(result.message);
+    }
+  } catch(err) {
+    btn.textContent = 'Register Your Team →';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    alert('Something went wrong. Please try again!\n' + err.message);
+  }
+}
+</script>
+</body>
+</html>
